@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Pilotos</title>
+        <style type="text/css">
+            .ui-widget,.ui-widget .ui-widget {
+                font-size: 95% !important;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <!-- Menu -->
+        <h:form id="formMenu" >
+            <p:tabMenu activeIndex="#{param.i}">
+                <p:menuitem value=" Home" outcome="index" icon="fa fa-home" >
+                    <f:param name="i" value="0" />
+                </p:menuitem>
+                <p:menuitem value="Carros" outcome="piloto" icon="fa fa-car">
+                    <f:param name="i" value="1" />
+                </p:menuitem>
+                <p:menuitem value="Pilotos" outcome="piloto" icon="fa fa-user">
+                    <f:param name="i" value="2" />
+                </p:menuitem>
+            </p:tabMenu>
+        </h:form>
+        <p:spacer width="100" height="10" />
+        <!-- Menu -->
+        <div align="center">
+            <h:form id="formPrincipal" >
+                <p:panel header="Pilotos" style="width: 95%">
+                    <p:spacer width="20" height="20" />
+                    <p:dataTable 
+                        id="tabela"
+                        var="piloto" 
+                        rows="10"
+                        paginator="true"
+                        paginatorPosition="bottom"
+                        value="#{pilotoBean.lista}"
+                        emptyMessage="Sem pilotos cadastrados">
+                        <p:column style="text-align: center;" 
+                                  headerText="Nome" 
+                                  sortBy="#{piloto.nome}">
+                            <h:outputText value="#{piloto.nome}" />
+                        </p:column>
+                        <p:column style="text-align: center;" 
+                                  headerText="Modelo" 
+                                  sortBy="#{piloto.pais}">
+                            <h:outputText value="#{piloto.pais}" />
+                        </p:column>
+                        <p:column style="text-align: center; width: 20%" 
+                                  headerText="Ações">
+                            <p:commandButton 
+                                icon="fa fa-info"
+                                title="Informações do Carro" 
+                                update=":formPiloto"
+                                onclick="PF('dialogPiloto').show();"
+                                ajax="true" >
+                                <f:setPropertyActionListener 
+                                    target="#{pilotoBean.piloto}"
+                                    value="#{piloto}" />
+                            </p:commandButton>
+                            <p:commandButton 
+                                icon="fa fa-edit"
+                                title="Editar Carro" 
+                                update=":formEditar"
+                                onclick="PF('dialogEditar').show();"
+                                ajax="true" >
+                                <f:setPropertyActionListener 
+                                    target="#{pilotoBean.piloto}"
+                                    value="#{piloto}" />
+                            </p:commandButton>
+                            <p:commandButton 
+                                icon="fa fa-trash"
+                                title="Excluir Carro" 
+                                update=":formExcluir"
+                                onclick="PF('dialogExcluir').show();"
+                                ajax="true" >
+                                <f:setPropertyActionListener 
+                                    target="#{pilotoBean.piloto}"
+                                    value="#{piloto}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                    <p:spacer width="20" height="20" />
+                    <p:separator />
+                    <p:commandButton 
+                        icon="fa fa-plus"
+                        value="Adicionar" 
+                        actionListener="#{pilotoBean.preparar(actionEvent)}"
+                        update="formAdicionar"
+                        onclick="PF('dialogAdicionar').show();"
+                        ajax="true" />
+                </p:panel>
+            </h:form>
+        </div>
+        <!-- Adicionar Pacote para Instalacao -->
+        <p:dialog 
+            header="Adicionar Piloto"
+            widgetVar="dialogAdicionar"
+            modal="true"
+            closeOnEscape="true"
+            resizable="false" >
+            <h:form id="formAdicionar" acceptcharset="UTF-8" enctype="application/form-data" >
+                <h:panelGrid id="panelAdicionar" columns="2"  border="0">
+                    <p:outputLabel value="Nome " />
+                    <p:inputText id="Nome" value="#{pilotoBean.piloto.nome}" />
+                    <p:outputLabel value="País " />
+                    <p:inputText id="Pais" value="#{pilotoBean.piloto.pais}" />
+                    <p:outputLabel value="Títulos Mundiais " />
+                    <p:inputText id="Titulos" value="#{pilotoBean.piloto.titulos}" />
+                    <p:outputLabel value="Corridas" />
+                    <p:inputText id="Corridas" value="#{pilotoBean.piloto.corridas}" />
+                    <p:outputLabel value="Vitórias " />
+                    <p:inputText id="Vitorias" value="#{pilotoBean.piloto.vitorias}" />
+                    <p:outputLabel value="Poles Position " />
+                    <p:inputText id="Poles" value="#{pilotoBean.piloto.poles}" />
+                </h:panelGrid>  
+                <p:separator />
+                <p:commandButton 
+                    icon="fa fa-plus"
+                    value="Adicionar" 
+                    action="#{pilotoBean.adicionar(actionEvent)}"
+                    update=":formPrincipal:tabela"
+                    oncomplete="dialogAdicionar.hide()"
+                    process="@form"
+                    ajax="false" />
+                <p:commandButton 
+                    icon="fa fa-close"
+                    value="Fechar"
+                    onsuccess="PF('dialogAdicionar').hide();"
+                    update="formAdicionar"/>
+            </h:form>
+        </p:dialog>  
+        <!-- Informações do Pacote -->
+        <p:dialog 
+            header="Informações do Piloto"
+            widgetVar="dialogPiloto"
+            modal="true"
+            closeOnEscape="true"
+            resizable="false">
+            <h:form id="formPiloto" acceptcharset="UTF-8" enctype="application/form-data" >
+                <h:panelGrid id="panelPacote" columns="2" border="">
+                    <p:outputLabel value="Nome " />
+                    <p:outputLabel value="#{pilotoBean.piloto.nome} " />
+                    <p:outputLabel value="País " />
+                    <p:outputLabel value="#{pilotoBean.piloto.pais} " />
+                    <p:outputLabel value="Títulos Mundiais " />
+                    <p:outputLabel value="#{pilotoBean.piloto.titulos} " />
+                    <p:outputLabel value="Corridas " />
+                    <p:outputLabel value="#{pilotoBean.piloto.corridas} " />
+                    <p:outputLabel value="Vitórias " />
+                    <p:outputLabel value="#{pilotoBean.piloto.vitorias} " />
+                    <p:outputLabel value="Poles Positions " />
+                    <p:outputLabel value="#{pilotoBean.piloto.poles} " />
+                </h:panelGrid>
+                <p:separator />
+                <p:commandButton 
+                    icon="fa fa-close"
+                    value="Fechar"
+                    onsuccess="PF('dialogPiloto').hide();"
+                    update="formPiloto"/>
+            </h:form>
+        </p:dialog>
+        <!-- Editar Pacote para Instalacao -->
+        <p:dialog 
+            header="Editar Piloto"
+            widgetVar="dialogEditar"
+            modal="true"
+            closeOnEscape="true"
+            resizable="false" >
+            <h:form id="formEditar" acceptcharset="UTF-8" enctype="application/form-data" >
+                <h:inputHidden value="#{pilotoBean.piloto.id}" />
+                <h:panelGrid id="panelAdicionar" columns="2"  border="0">
+                    <p:outputLabel value="Nome " />
+                    <p:inputText id="Nome" value="#{pilotoBean.piloto.nome}" />
+                    <p:outputLabel value="País " />
+                    <p:inputText id="Pais" value="#{pilotoBean.piloto.pais}" />
+                    <p:outputLabel value="Títulos Mundiais " />
+                    <p:inputText id="Titulos" value="#{pilotoBean.piloto.titulos}" />
+                    <p:outputLabel value="Corridas" />
+                    <p:inputText id="Corridas" value="#{pilotoBean.piloto.corridas}" />
+                    <p:outputLabel value="Vitórias " />
+                    <p:inputText id="Vitorias" value="#{pilotoBean.piloto.vitorias}" />
+                    <p:outputLabel value="Poles Position " />
+                    <p:inputText id="Poles" value="#{pilotoBean.piloto.poles}" />
+                </h:panelGrid>  
+                <p:separator />
+                <p:commandButton 
+                    icon="fa fa-plus"
+                    value="Editar" 
+                    action="#{pilotoBean.editar(actionEvent)}"
+                    update=":formPrincipal:tabela"
+                    oncomplete="dialogEditar.hide()"
+                    process="@form"
+                    ajax="false" />
+                <p:commandButton 
+                    icon="fa fa-close"
+                    value="Fechar"
+                    onsuccess="PF('dialogEditar').hide();"
+                    update="formEditar"/>
+            </h:form>
+        </p:dialog>  
+        <!-- Formulário Exclusão -->
+        <p:dialog 
+            header="Excluir"
+            widgetVar="dialogExcluir"
+            modal="true"
+            closeOnEscape="true"
+            resizable="false">
+            <h:form id="formExcluir" >
+                <h:inputHidden value="#{pilotoBean.piloto.id}" />
+                <p:outputLabel value="Você gostaria de excluir o piloto #{pilotoBean.piloto.nome}?" />
+                <p:separator />
+                <p:commandButton 
+                    icon="fa fa-trash"
+                    value="Sim" 
+                    action="#{pilotoBean.excluir(actionEvent)}"
+                    update="dialogAdicionar"
+                    oncomplete="dialogExcluir.hide()"
+                    process="@form"
+                    ajax="false" />
+                <p:commandButton 
+                    icon="fa fa-close"
+                    value="Não"
+                    onsuccess="PF('dialogExcluir').hide();"
+                    update="formExcluir"/>
+            </h:form>
+        </p:dialog> 
+    </h:body>
+</html>

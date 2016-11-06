@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Carros</title>
+        <style type="text/css">
+            .ui-widget,.ui-widget .ui-widget {
+                font-size: 95% !important;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <!-- Menu -->
+        <h:form id="formMenu" >
+            <p:tabMenu activeIndex="#{param.i}">
+                <p:menuitem value=" Home" outcome="index" icon="fa fa-home" >
+                    <f:param name="i" value="0" />
+                </p:menuitem>
+                <p:menuitem value="Carros" outcome="carro" icon="fa fa-car">
+                    <f:param name="i" value="1" />
+                </p:menuitem>
+                <p:menuitem value="Pilotos" outcome="piloto" icon="fa fa-user">
+                    <f:param name="i" value="2" />
+                </p:menuitem>
+            </p:tabMenu>
+        </h:form>
+        <p:spacer width="100" height="10" />
+        <!-- Menu -->
+        <div align="center">
+            <h:form id="formPrincipal" >
+                <p:panel header="Carros" style="width: 95%">
+                    <p:spacer width="20" height="20" />
+                    <p:dataTable 
+                        id="tabela"
+                        var="carro" 
+                        rows="10"
+                        paginator="true"
+                        paginatorPosition="bottom"
+                        value="#{carroBean.lista}"
+                        emptyMessage="Sem carros cadastrados">
+                        <p:column style="text-align: center;" 
+                                  headerText="Fabricante" 
+                                  sortBy="#{carro.fabricante}">
+                            <h:outputText value="#{carro.fabricante}" />
+                        </p:column>
+                        <p:column style="text-align: center;" 
+                                  headerText="Modelo" 
+                                  sortBy="#{carro.nome}">
+                            <h:outputText value="#{carro.nome}" />
+                        </p:column>
+                        <p:column style="text-align: center;" 
+                                  headerText="País" 
+                                  sortBy="#{carro.pais}">
+                            <h:outputText value="#{carro.pais}" />
+                        </p:column>
+                        <p:column style="text-align: center; width: 20%" 
+                                  headerText="Ações">
+                            <p:commandButton 
+                                icon="fa fa-info"
+                                title="Informações do Carro" 
+                                update=":formCarro"
+                                onclick="PF('dialogCarro').show();"
+                                ajax="true" >
+                                <f:setPropertyActionListener 
+                                    target="#{carroBean.carro}"
+                                    value="#{carro}" />
+                            </p:commandButton>
+                            <p:commandButton 
+                                icon="fa fa-edit"
+                                title="Editar Carro" 
+                                update=":formEditar"
+                                onclick="PF('dialogEditar').show();"
+                                ajax="true" >
+                                <f:setPropertyActionListener 
+                                    target="#{carroBean.carro}"
+                                    value="#{carro}" />
+                            </p:commandButton>
+                            <p:commandButton 
+                                icon="fa fa-trash"
+                                title="Excluir Carro" 
+                                update=":formExcluir"
+                                onclick="PF('dialogExcluir').show();"
+                                ajax="true" >
+                                <f:setPropertyActionListener 
+                                    target="#{carroBean.carro}"
+                                    value="#{carro}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                    <p:spacer width="20" height="20" />
+                    <p:separator />
+                    <p:commandButton 
+                        icon="fa fa-plus"
+                        value="Adicionar" 
+                        actionListener="#{carroBean.preparar(actionEvent)}"
+                        update="formAdicionar"
+                        onclick="PF('dialogAdicionar').show();"
+                        ajax="true" />
+                </p:panel>
+            </h:form>
+
+        </div>
+        <!-- Adicionar Pacote para Instalacao -->
+        <p:dialog 
+            header="Adicionar Carro"
+            widgetVar="dialogAdicionar"
+            modal="true"
+            closeOnEscape="true"
+            resizable="false" >
+            <h:form id="formAdicionar" acceptcharset="UTF-8" enctype="application/form-data" >
+                <h:panelGrid id="panelAdicionar" columns="2"  border="0">
+                    <p:outputLabel value="Fabricante " />
+                    <p:inputText id="Fabricante" value="#{carroBean.carro.fabricante}" />
+                    <p:outputLabel value="Modelo " />
+                    <p:inputText id="Modelo" value="#{carroBean.carro.nome}" />
+                    <p:outputLabel value="Potência (cv)" />
+                    <p:inputText id="Potencia" value="#{carroBean.carro.potencia}" />
+                    <p:outputLabel value="Vel. Máxima (km/h) " />
+                    <p:inputText id="Vmax" value="#{carroBean.carro.vmax}" />
+                    <p:outputLabel value="Peso (kg) " />
+                    <p:inputText id="Peso" value="#{carroBean.carro.peso}" />
+                    <p:outputLabel value="Cilindros " />
+                    <p:inputText id="Cilindros" value="#{carroBean.carro.cilindros}" />
+                    <p:outputLabel value="Cilindradas (cc) " />
+                    <p:inputText id="Cc" value="#{carroBean.carro.cc}" />
+                    <p:outputLabel value="País " />
+                    <p:inputText id="Pais" value="#{carroBean.carro.pais}" />
+                    <p:outputLabel value="Ano de Fabricação " />
+                    <p:inputText id="Ano" value="#{carroBean.carro.ano}" />
+                </h:panelGrid>  
+                <p:separator />
+                <p:commandButton 
+                    icon="fa fa-plus"
+                    value="Adicionar" 
+                    action="#{carroBean.adicionar(actionEvent)}"
+                    update=":formPrincipal:tabela"
+                    oncomplete="dialogAdicionar.hide()"
+                    process="@form"
+                    ajax="false" />
+                <p:commandButton 
+                    icon="fa fa-close"
+                    value="Fechar"
+                    onsuccess="PF('dialogAdicionar').hide();"
+                    update="formAdicionar"/>
+            </h:form>
+        </p:dialog>  
+        <!-- Informações do Pacote -->
+        <p:dialog 
+            header="Informações do Carro"
+            widgetVar="dialogCarro"
+            modal="true"
+            closeOnEscape="true"
+            resizable="false">
+            <h:form id="formCarro" acceptcharset="UTF-8" enctype="application/form-data" >
+                <h:panelGrid id="panelPacote" columns="2" border="">
+                    <p:outputLabel value="Fabricante " />
+                    <p:outputLabel value="#{carroBean.carro.fabricante} " />
+                    <p:outputLabel value="Modelo " />
+                    <p:outputLabel value="#{carroBean.carro.nome} " />
+                    <p:outputLabel value="Potência (cv)" />
+                    <p:outputLabel value="#{carroBean.carro.potencia} " />
+                    <p:outputLabel value="Vel. Máxima (km/h) " />
+                    <p:outputLabel value="#{carroBean.carro.vmax} " />
+                    <p:outputLabel value="Peso (kg) " />
+                    <p:outputLabel value="#{carroBean.carro.peso} " />
+                    <p:outputLabel value="Cilindros " />
+                    <p:outputLabel value="#{carroBean.carro.cilindros} " />
+                    <p:outputLabel value="Cilindradas (cc) " />
+                    <p:outputLabel value="#{carroBean.carro.cc} " />
+                    <p:outputLabel value="País " />
+                    <p:outputLabel value="#{carroBean.carro.pais} " />
+                    <p:outputLabel value="Ano de Fabricação " />
+                    <p:outputLabel value="#{carroBean.carro.ano} " />
+                </h:panelGrid>
+                <p:separator />
+                <p:commandButton 
+                    icon="fa fa-close"
+                    value="Fechar"
+                    onsuccess="PF('dialogCarro').hide();"
+                    update="formCarro"/>
+            </h:form>
+        </p:dialog>
+        <!-- Editar Pacote para Instalacao -->
+        <p:dialog 
+            header="Editar Carro"
+            widgetVar="dialogEditar"
+            modal="true"
+            closeOnEscape="true"
+            resizable="false" >
+            <h:form id="formEditar" acceptcharset="UTF-8" enctype="application/form-data" >
+                <h:inputHidden value="#{carroBean.carro.id}" />
+                <h:panelGrid id="panelAdicionar" columns="2"  border="0">
+                    <p:outputLabel value="Fabricante " />
+                    <p:inputText id="Fabricante" value="#{carroBean.carro.fabricante}" />
+                    <p:outputLabel value="Modelo " />
+                    <p:inputText id="Modelo" value="#{carroBean.carro.nome}" />
+                    <p:outputLabel value="Potência (cv)" />
+                    <p:inputText id="Potencia" value="#{carroBean.carro.potencia}" />
+                    <p:outputLabel value="Vel. Máxima (km/h) " />
+                    <p:inputText id="Vmax" value="#{carroBean.carro.vmax}" />
+                    <p:outputLabel value="Peso (kg) " />
+                    <p:inputText id="Peso" value="#{carroBean.carro.peso}" />
+                    <p:outputLabel value="Cilindros " />
+                    <p:inputText id="Cilindros" value="#{carroBean.carro.cilindros}" />
+                    <p:outputLabel value="Cilindradas (cc) " />
+                    <p:inputText id="Cc" value="#{carroBean.carro.cc}" />
+                    <p:outputLabel value="País " />
+                    <p:inputText id="Pais" value="#{carroBean.carro.pais}" />
+                    <p:outputLabel value="Ano de Fabricação " />
+                    <p:inputText id="Ano" value="#{carroBean.carro.ano}" />
+                </h:panelGrid>  
+                <p:separator />
+                <p:commandButton 
+                    icon="fa fa-plus"
+                    value="Editar" 
+                    action="#{carroBean.editar(actionEvent)}"
+                    update=":formPrincipal:tabela"
+                    oncomplete="dialogEditar.hide()"
+                    process="@form"
+                    ajax="false" />
+                <p:commandButton 
+                    icon="fa fa-close"
+                    value="Fechar"
+                    onsuccess="PF('dialogEditar').hide();"
+                    update="formEditar"/>
+            </h:form>
+        </p:dialog>  
+        <!-- Formulário Exclusão -->
+        <p:dialog 
+            header="Excluir"
+            widgetVar="dialogExcluir"
+            modal="true"
+            closeOnEscape="true"
+            resizable="false">
+            <h:form id="formExcluir" >
+                <h:inputHidden value="#{carroBean.carro.id}" />
+                <p:outputLabel value="Você gostaria de excluir o #{carroBean.carro.fabricante} #{carroBean.carro.nome}?" />
+                <p:separator />
+                <p:commandButton 
+                    icon="fa fa-trash"
+                    value="Sim" 
+                    action="#{carroBean.excluir(actionEvent)}"
+                    update="dialogAdicionar"
+                    oncomplete="dialogExcluir.hide()"
+                    process="@form"
+                    ajax="false" />
+                <p:commandButton 
+                    icon="fa fa-close"
+                    value="Não"
+                    onsuccess="PF('dialogExcluir').hide();"
+                    update="formExcluir"/>
+            </h:form>
+        </p:dialog> 
+    </h:body>
+</html>
