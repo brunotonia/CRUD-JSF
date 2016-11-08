@@ -3,7 +3,9 @@ package br.com.brunotonia.supertrunfo.dao;
 import br.com.brunotonia.supertrunfo.vo.Piloto;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 
 public class PilotoDAO {
     
@@ -16,7 +18,7 @@ public class PilotoDAO {
             session.close();
             return true;
         }
-        catch(Exception e) {
+        catch(HibernateException e) {
             System.out.println(e.toString());
             return false;
         }
@@ -26,12 +28,12 @@ public class PilotoDAO {
         try {
             Session session = HibernateUtil.getSessionFactory().openSession();
             session.beginTransaction();
-            session.persist(piloto);
+            session.update(piloto);
             session.getTransaction().commit();
             session.close();
             return true;
         }
-        catch(Exception e) {
+        catch(HibernateException e) {
             System.out.println(e.toString());
             return false;
         }
@@ -46,7 +48,7 @@ public class PilotoDAO {
             session.close();
             return true;
         }
-        catch(Exception e) {
+        catch(HibernateException e) {
             System.out.println(e.toString());
             return false;
         }
@@ -55,7 +57,7 @@ public class PilotoDAO {
     public List<Piloto> listar() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        Criteria criteriaCarro = session.createCriteria(Piloto.class);
+        Criteria criteriaCarro = session.createCriteria(Piloto.class).addOrder(Order.asc("id"));
         List<Piloto> lista = criteriaCarro.list();
         session.close();
         return lista;
